@@ -5,6 +5,7 @@ class CreateAccessGrants < ActiveRecord::Migration[5.2]
       t.string :access_token
       t.string :refresh_token
       t.datetime :access_token_expires_at
+      t.string :state
       t.references :user, foreign_key: true
       t.references :client, foreign_key: true
 

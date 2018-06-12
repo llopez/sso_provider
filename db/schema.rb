@@ -17,6 +17,7 @@ ActiveRecord::Schema.define(version: 2018_06_11_211114) do
     t.string "access_token"
     t.string "refresh_token"
     t.datetime "access_token_expires_at"
+    t.string "state"
     t.integer "user_id"
     t.integer "client_id"
     t.datetime "created_at", null: false
