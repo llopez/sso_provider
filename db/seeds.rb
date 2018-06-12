@@ -15,6 +15,17 @@ Client.create(
 User.create(
   name: 'Luis',
   email: 'luis@example.com',
+  age: 34,
+  gender: 'male',
+  password: 'password',
+  password_confirmation: 'password'
+)
+
+User.create(
+  name: 'Aye',
+  email: 'aye@example.com',
+  age: 35,
+  gender: 'female',
   password: 'password',
   password_confirmation: 'password'
 )

@@ -1,71 +1,68 @@
 class AuthController < ApplicationController
-
-  before_action :authenticate_user!, :except => [:access_token]
-  skip_before_action :verify_authenticity_token, :only => [:access_token]
-
-  def welcome
-    render :text => "Hiya! #{current_user.first_name} #{current_user.last_name}"
-  end
+  before_action :authenticate_user_from_token!
+  before_action :authenticate_user!, except: :access_token
+  skip_before_action :verify_authenticity_token, only: :access_token
 
   def authorize
-    access_grant = current_user.access_grants.create(:client => application)
+    access_grant = current_user.access_grants.create(
+      client: application,
+      state: params[:state]
+    )
     redirect_to access_grant.redirect_uri_for(params[:redirect_uri])
   end
 
   def access_token
-    application = Client.authenticate(params[:client_id], params[:client_secret])
+    application = Client.authenticate(
+      params[:client_id],
+      params[:client_secret]
+    )
 
     if application.nil?
-      render :json => {:error => "Could not find application"}
+      render json: { error: 'Could not find application' }
       return
     end
 
-    access_grant = AccessGrant.authenticate(params[:code], application.id)
+    access_grant = AccessGrant.authenticate(
+      params[:code],
+      application.id
+    )
+
     if access_grant.nil?
-      render :json => {:error => "Could not authenticate access code"}
+      render json: { error: 'Could not authenticate access code' }
       return
     end
 
     access_grant.start_expiry_period!
-    render :json => {:access_token => access_grant.access_token, :refresh_token => access_grant.refresh_token, :expires_in => Devise.timeout_in.to_i}
+
+    render json: {
+      access_token: access_grant.access_token,
+      refresh_token: access_grant.refresh_token,
+      expires_in: Devise.timeout_in.to_i
+    }
   end
 
   def failure
-    render :text => "ERROR: #{params[:message]}"
+    render text: "ERROR: #{params[:message]}"
   end
 
   def user
-    hash = {
-      :provider => 'josh_id',
-      :id => current_user.id.to_s,
-      :info => {
-         :email      => current_user.email,
+    render json: {
+      provider: 'sso',
+      id: current_user.id.to_s,
+      info: {
+        email: current_user.email
       },
-      :extra => {
-         :first_name => current_user.first_name,
-         :last_name  => current_user.last_name
+      extra: {
+        name: current_user.name,
+        gender: current_user.gender,
+        age: current_user.age
       }
     }
-
-    render :json => hash.to_json
   end
 
-  # Incase, we need to check timeout of the session from a different application!
-  # This will be called ONLY if the user is authenticated and token is valid
-  # Extend the UserManager session
-  def isalive
-    warden.set_user(current_user, :scope => :user)
-    response = { 'status' => 'ok' }
-
-    respond_to do |format|
-      format.any { render :json => response.to_json }
-    end
-  end
-
-  protected
+  private
 
   def application
     @application ||= Client.find_by_app_id(params[:client_id])
   end
-
 end
