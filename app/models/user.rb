@@ -4,11 +4,6 @@ class User < ApplicationRecord
 
   has_many :access_grants, dependent: :destroy
 
-  # TODO: Remove if it is not needed, also remove migration
-  # before_create do
-  #   self.authentication_token = Devise.friendly_token
-  # end
-
   def self.find_from_oauth_token(token)
     includes(:access_grants)
       .where(access_grants: { access_token: token })
