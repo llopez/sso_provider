@@ -8,8 +8,8 @@
 
 Client.create(
   name: 'Client #1',
-  app_id: 'YE0NYveQGoFsNLX220Dy5g',
-  app_secret: 'aqpGBedDnHFyp5MmgT8KErr9D015ScmaY8r3vHg5C0'
+  app_id: 'APPID001',
+  app_secret: 'APPSECRET001'
 )
 
 User.create(
