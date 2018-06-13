@@ -1,6 +1,7 @@
 class Client < ApplicationRecord
+  has_many :access_grants
 
   def self.authenticate(app_id, app_secret)
-    where(["app_id = ? AND app_secret = ?", app_id, app_secret]).first
+    where(app_id: app_id, app_secret: app_secret).first
   end
 end
