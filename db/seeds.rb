@@ -12,6 +12,12 @@ Client.create(
   app_secret: 'APPSECRET001'
 )
 
+Client.create(
+  name: 'Client #2',
+  app_id: 'APPID002',
+  app_secret: 'APPSECRET002'
+)
+
 User.create(
   name: 'Luis',
   email: 'luis@example.com',
